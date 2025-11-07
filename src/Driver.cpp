@@ -76,19 +76,23 @@ int Driver::executeStmtDiar(SQLHSTMT& stmt, const char* query){
 }
 
 int Driver::executeStmt(SQLHSTMT& stmt){
+    // 방어: 이전에 열려있을 수 있는 커서를 닫는다.
+    SQLCloseCursor(stmt); // 반환값 무시(닫을 커서가 없으면 NOOP)
+
     SQLRETURN ret = SQLExecute(stmt);
-      if (ret == SQL_SUCCESS_WITH_INFO){
-      	printf("Driver reported the following diagnostics\n");
-      	extract_error("SQLExecute", stmt, SQL_HANDLE_STMT);
-      return 1;
-      
+
+    if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO){
+        if (ret == SQL_SUCCESS_WITH_INFO){
+            printf("Driver reported the following diagnostics\n");
+            extract_error("SQLExecute", stmt, SQL_HANDLE_STMT);
+        }
+        return 0; // SUCCESS_WITH_INFO도 성공으로 간주
+    } else {
+        fprintf(stderr, "\nFailed to execute stmt!\n\n");
+        extract_error("SQLExecute", stmt, SQL_HANDLE_STMT);
+        return 2;
     }
-    else if(ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO){
-      fprintf(stderr, "\nFailed to execute stmt!\n\n");
-      extract_error("SQLExecute", stmt, SQL_HANDLE_STMT);
-      return 2;
-    }
-    return 0;
+	return 0;
 }
 
 void Driver::prepareStmt(SQLHDBC& dbc, SQLHSTMT& stmt, const char* query){
@@ -251,7 +255,7 @@ void Driver::resetStmt(SQLHSTMT& stmt){
 
 void Driver::disconnectDB(SQLHDBC& dbc){
     SQLDisconnect(dbc);
-    SQLFreeHandle(SQL_HANDLE_DBC, &dbc);
+    SQLFreeHandle(SQL_HANDLE_DBC, dbc);
     printf("\n---------------------------------\n\tDisconnected from the DB\n---------------------------------\n\n");
 }
 
