@@ -25,8 +25,8 @@ private:
     vector<double> t_throughputs;
     vector<double> a_throughputs;
 public:
-    void deleteTuples();
-    void createFreshnessTable(int& tc);
+    static void deleteTuples();
+    static void createFreshnessTable(int& tc);
     double runBenchmark(int& peak, int& choice);
     void findMaxTCAC();
     void setMaxTC(int& tc);
