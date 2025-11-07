@@ -288,6 +288,7 @@ vector<vector<string>> SQLDialect::createSchemaStmt = {
                 "	C_MKTSEGMENT VARCHAR(10),\n"
                 "	C_PAYMENTCNT INTEGER,\n"
                 "	PRIMARY KEY (C_CUSTKEY)\n"
+		"	, KEY `idx_c_name` (`C_NAME`)\n"
                 ")",
                 "CREATE TABLE HAT.SUPPLIER (\n"
                 "	S_SUPPKEY INTEGER NOT NULL,\n"
@@ -299,6 +300,7 @@ vector<vector<string>> SQLDialect::createSchemaStmt = {
                 "	S_PHONE CHAR(15),\n"
                 "	S_YTD DECIMAL,\n"
                 "	PRIMARY KEY (S_SUPPKEY)\n"
+		"	, KEY `idx_s_name` (`S_NAME`)\n"
                 ")",
                 "CREATE TABLE HAT.DATE (\n"
                 "	D_DATEKEY INTEGER NOT NULL,\n"
